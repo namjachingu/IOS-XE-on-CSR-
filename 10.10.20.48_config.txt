@@ -1,9 +1,8 @@
-
 Building configuration...
 
-Current configuration : 4206 bytes
+Current configuration : 5396 bytes
 !
-! Last configuration change at 08:02:37 UTC Mon Feb 22 2021 by cisco
+! Last configuration change at 11:25:57 UTC Tue Feb 23 2021 by developer
 !
 version 16.9
 service timestamps debug datetime msec
@@ -17,6 +16,42 @@ hostname csr1000v-1
 boot-start-marker
 boot-end-marker
 !
+!
+vrf definition blue
+ description Blue VRF
+ rd 1:410
+ !
+ address-family ipv4
+  route-target export 1:410
+  route-target import 1:410
+ exit-address-family
+!
+vrf definition green
+ description Green VRF
+ rd 1:420
+ !
+ address-family ipv4
+  route-target export 1:420
+  route-target import 1:420
+ exit-address-family
+!
+vrf definition my_cool_pod
+ description my_cool_pod VRF
+ rd 1:44
+ !
+ address-family ipv4
+  route-target export 1:44
+  route-target import 1:44
+ exit-address-family
+!
+vrf definition red
+ description Red VRF
+ rd 1:400
+ !
+ address-family ipv4
+  route-target export 1:400
+  route-target import 1:400
+ exit-address-family
 !
 no logging console
 enable secret 5 $1$20ue$uC.uSGo6nvfWs63EjjzRP.
@@ -135,6 +170,30 @@ redundancy
 ! 
 ! 
 !
+!
+interface Loopback44
+ description Pod Number 1444
+ ip address 10.111.44.1 255.255.255.255
+!
+interface Loopback1144
+ description Pod Number 1144
+ vrf forwarding red
+ ip address 10.11.44.1 255.255.255.255
+!
+interface Loopback1244
+ description Pod Number 1244
+ vrf forwarding blue
+ ip address 10.12.44.1 255.255.255.255
+!
+interface Loopback1344
+ description Pod Number 1344
+ vrf forwarding green
+ ip address 10.13.44.1 255.255.255.255
+!
+interface Loopback1444
+ description Pod Number 1444
+ vrf forwarding my_cool_pod
+ ip address 10.14.44.1 255.255.255.255
 !
 interface GigabitEthernet1
  description MANAGEMENT INTERFACE - DON'T TOUCH ME
